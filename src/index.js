@@ -14,16 +14,18 @@ const publicDirectoryPath = path.join(__dirname, '../public');
 
 app.use(express.static(publicDirectoryPath));
 
-let count = 0;
-
 io.on('connection', (socket) => {
 
-    const newMessage = '';
+    socket.broadcast.emit('USER_JOINED','A new user has joined!');
 
-    socket.on('sendMessage', (message) => {
-        newMessage = message;
+    socket.on('SEND_MESSAGE', (message) => {
+        socket.broadcast.emit('NEW_MESSAGE', message);
     });
-    io.emit('newMessage', (newMessage));
+
+    socket.on('disconnect', () => {
+        io.emit('USER_LEFT','A user has disconnected!');
+    })
+
 })
 
 server.listen(port ,() => {    
