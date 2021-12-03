@@ -1,3 +1,5 @@
+//TODO: Implement auto scrolling
+
 const socket = io();
 
 const content = document.querySelector('.conversation-wrapper');
@@ -32,14 +34,15 @@ socket.on('MESSAGE_SYNC', (message) =>{
 
 });
 
-socket.on('LOCATION_SYNC',({latitude, longitude}) => {
+socket.on('LOCATION_SYNC',({username, latitude, longitude}) => {
+
     let messageLocation = document.createElement('div');
     let messageLocationText = document.createElement('div');
 
     messageLocation.className = 'message-location';
     messageLocationText.className = 'location';
 
-    messageLocationText.innerHTML = `🌎 An user is at https://google.com/maps?q=${latitude},${longitude}, go say hi!`;
+    messageLocationText.innerHTML = `🌎 ${username} is at https://google.com/maps?q=${latitude},${longitude}, go say hi!`;
     messageLocation.appendChild(messageLocationText);
 
     content.appendChild(messageLocation);
@@ -98,11 +101,9 @@ document.querySelector('.send').addEventListener('click', (event) => {
 
     content.appendChild(messageSent);
 
-    socket.emit('MESSAGE',message.value, ({timestamp,acknowledged}) => {
+    socket.emit('MESSAGE',message.value, (timestamp,error) => {
 
-        console.log(timestamp);
-
-        if(acknowledged) {
+        if(!error) {
             messageSentStatus.innerHTML = '✅';
         } else {
             messageSentStatus.innerHTML = '❌';
@@ -142,11 +143,11 @@ document.querySelector('.location').addEventListener('click', (event) => {
 
         messageLocationText.innerHTML = `🌎 You shared your location at https://google.com/maps?q=${latitude},${longitude} !`;
 
-        socket.emit('LOCATION',{latitude, longitude}, ({timestamp, acknowledged}) => {
+        socket.emit('LOCATION',{latitude, longitude}, (timestamp, error) => {
 
             console.log(timestamp);
     
-            if(acknowledged) {
+            if(!error) {
                 messageLocationText.innerHTML += '✅';
             } else {
                 messageLocationText.innerHTML += '❌';
@@ -158,5 +159,10 @@ document.querySelector('.location').addEventListener('click', (event) => {
 
 });
 
-socket.emit('JOIN', {username, room});
+socket.emit('JOIN', {username, room} ,(timestamp,error) => {
+    if(error) {
+        alert(error);
+        window.history.back();
+    }
+});
 

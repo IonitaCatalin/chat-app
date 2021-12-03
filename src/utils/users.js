@@ -1,9 +1,10 @@
 const users = [];
 
 const addUser = ({id, username, room}) => {
+
     // Clean the data
 
-    username = username.trim().toLowerCase();
+    username = username.trim();
     room = room.trim().toLowerCase();
 
     if(!username || !room) {
@@ -18,7 +19,7 @@ const addUser = ({id, username, room}) => {
 
     if(existingUser) {
         return {
-            error: 'Username is in use';
+            error: 'Username is in use'
         }
     }
 
@@ -36,13 +37,27 @@ const removeUser = (id) => {
     }
 };
 
-const getUser = () => {
+const getUser = (id) => {
+    const user = users.find((user) => {
+        return user.id === id;
+    })
 
+    if(!user) {
+        return {
+            error: 'User not found'
+        }
+    }
+
+    return { user }
 };
 
-const getUsersInRoom = () => {
+const getUsersInRoom = (room) => {
 
+    room = room.trim().toLowerCase();
+
+    return users.filter((user) => user.room === room);
 };
+
 
 module.exports = {
     addUser,
