@@ -4,31 +4,19 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="style.css">
-    <link href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css" rel="stylesheet">
-    <title>ChatApp!</title>
-
+    <link rel="stylesheet" href="/css/landing.css">
+    <title>Join ChatApp!</title>
 </head>
 <body>
-    <div class="content">
-        <div class="conversation-title">
-            <h1>👍🏼 ChatApp!  </h1>
+    <div id="join-form">
+        <h2 class="header">Join Room 🚪</h2>
+        <div>
+          <form action="/chat.html">
+            <input type="text" name="username" placeholder="Username" required></input>
+            <input type="text" name="room" placeholder="Room" required></input>
+            <button type="submit">Join</button>
+          </form>
         </div>
-        <div class="conversation-wrapper">
-        </div>
-        <div class="messaging-area">
-            <a class="location">
-                <i class="ri-map-pin-2-line"></i>
-            </a>
-            <input id="message-text" placeholder="Your message here..." />
-            <a class="send">
-                <i class="ri-send-plane-line"></i> 
-            </a>
-
-        </div>
-    </div>
-
-    <script src='/socket.io/socket.io.js'></script>
-    <script src='/js/chat.js'></script>
+      </div>
 </body>
 </html>

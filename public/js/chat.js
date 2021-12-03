@@ -3,7 +3,9 @@ const socket = io();
 const content = document.querySelector('.conversation-wrapper');
 const message = document.querySelector('#message-text');
 
-socket.on('NEW_MESSAGE', (message) =>{
+const { username, room } = Qs.parse(location.search, {ignoreQueryPrefix: true});
+
+socket.on('MESSAGE_SYNC', (message) =>{
 
     let messageReceived = document.createElement('div');
     let messageReceivedBubble = document.createElement('div');
@@ -30,7 +32,7 @@ socket.on('NEW_MESSAGE', (message) =>{
 
 });
 
-socket.on('SEND_LOCATION',({latitude, longitude}) => {
+socket.on('LOCATION_SYNC',({latitude, longitude}) => {
     let messageLocation = document.createElement('div');
     let messageLocationText = document.createElement('div');
 
@@ -42,6 +44,21 @@ socket.on('SEND_LOCATION',({latitude, longitude}) => {
 
     content.appendChild(messageLocation);
 
+});
+
+socket.on('USER_SYNC', ({username}) => {
+        let messageJoin = document.createElement('div');
+        let messageJoinText = document.createElement('div');
+
+
+        messageJoin.className = 'message-join';
+        messageJoinText.className = 'join';
+
+        messageJoinText.innerHTML += `👋 ${username} just joined in, say hi !`;
+
+        messageJoin.appendChild(messageJoinText);
+        
+        content.appendChild(messageJoin);
 })
 
 document.querySelector('.send').addEventListener('click', (event) => {
@@ -65,11 +82,9 @@ document.querySelector('.send').addEventListener('click', (event) => {
     messageSentStatus.className = 'status';
 
 
-
     messageSentBubble.innerHTML = message.value;
-
     messageSentStatus.innerHTML = '⌛';
-    messageSentAvatar.innerHTML = 'ME';
+    messageSentAvatar.innerHTML = username.charAt(0).toUpperCase() + username.charAt(1).toUpperCase();
     messageSentTime.innerHTML = new Date().getHours() + ':' + new Date().getMinutes();
 
 
@@ -83,19 +98,15 @@ document.querySelector('.send').addEventListener('click', (event) => {
 
     content.appendChild(messageSent);
 
-    socket.emit('SEND_MESSAGE',message.value, ({timestamp,acknowledged}) => {
+    socket.emit('MESSAGE',message.value, ({timestamp,acknowledged}) => {
 
         console.log(timestamp);
 
         if(acknowledged) {
-            messageSentStatus.innerHTML = '⌛';
+            messageSentStatus.innerHTML = '✅';
         } else {
             messageSentStatus.innerHTML = '❌';
         }
-        setTimeout(() => {
-            messageSentStatus.innerHTML = '❌';
-            return;
-        },50000)
     }); 
 
     message.value = '';
@@ -131,21 +142,21 @@ document.querySelector('.location').addEventListener('click', (event) => {
 
         messageLocationText.innerHTML = `🌎 You shared your location at https://google.com/maps?q=${latitude},${longitude} !`;
 
-        socket.emit('SHARE_LOCATION',{latitude, longitude}, ({timestamp, acknowledged}) => {
+        socket.emit('LOCATION',{latitude, longitude}, ({timestamp, acknowledged}) => {
 
-            
+            console.log(timestamp);
+    
             if(acknowledged) {
                 messageLocationText.innerHTML += '✅';
             } else {
                 messageLocationText.innerHTML += '❌';
             }
-            
-            setTimeout(() => {
-                messageLocationText.innerHTML += '❌';
-                return;
-            },50000)
+    
 
         }); 
-    })
+    });
 
-})
+});
+
+socket.emit('JOIN', {username, room});
+
