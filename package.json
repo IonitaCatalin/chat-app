@@ -1,0 +1,31 @@
+{
+  "name": "chatapp",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "directories": {
+    "lib": "lib"
+  },
+  "dependencies": {
+    "bad-words": "^3.0.4",
+    "dotenv": "^10.0.0",
+    "express": "^4.17.1",
+    "socket.io": "^4.4.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node bootstrap.js",
+    "dev": "nodemon bootstrap.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/IonitaCatalin/ChatApp.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/IonitaCatalin/ChatApp/issues"
+  },
+  "homepage": "https://github.com/IonitaCatalin/ChatApp#readme"
+}
